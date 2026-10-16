@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Admit Card Portal - Gurukul Sr. Sec. School Dhankoli</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Righteous&family=Poppins:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #e2e8f0;
+      color: #000000;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    button, select, input, label {
+      touch-action: manipulation;
+    }
+
+    /* =====================================================================
+       1. RAZORPAY COIN FLIP + FULL PAGE FAST COLOR CHANGE SPLASH SCREEN
+       ===================================================================== */
+    #splashScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      perspective: 1000px;
+      animation: pageFastColorChange 0.35s linear infinite;
+    }
+
+    @keyframes pageFastColorChange {
+      0%   { background: radial-gradient(circle, #ff0055 0%, #4a0018 100%); }
+      16%  { background: radial-gradient(circle, #00d2ff 0%, #00254d 100%); }
+      32%  { background: radial-gradient(circle, #7928ca 0%, #210040 100%); }
+      48%  { background: radial-gradient(circle, #00e676 0%, #003319 100%); }
+      64%  { background: radial-gradient(circle, #ff6d00 0%, #4d1c00 100%); }
+      80%  { background: radial-gradient(circle, #d500f9 0%, #310042 100%); }
+      100% { background: radial-gradient(circle, #ff0055 0%, #4a0018 100%); }
+    }
+
+    .rzp-coin-wrapper {
+      position: relative;
+      width: 148px;
+      height: 148px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      transform-style: preserve-3d;
+    }
+
+    .rzp-wave {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      opacity: 0;
+      animation: rzpWaveOut 1.1s ease-out 0.8s infinite;
+    }
+
+    .rzp-wave.w2 {
+      animation-delay: 1.2s;
+    }
+
+    @keyframes rzpWaveOut {
+      0%   { transform: scale(0.8); opacity: 0.95; }
+      100% { transform: scale(2.1); opacity: 0; }
+    }
+
+    .rzp-coin-3d {
+      width: 136px;
+      height: 136px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rzpFlipBounce 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes rzpFlipBounce {
+      0%   { transform: translateY(190px) scale(0.25) rotateY(0deg); opacity: 0; }
+      50%  { transform: translateY(-28px) scale(1.1) rotateY(720deg); opacity: 1; }
+      80%  { transform: translateY(6px) scale(0.97) rotateY(1260deg); }
+      100% { transform: translateY(0px) scale(1) rotateY(1440deg); opacity: 1; }
+    }
+
+    .rzp-coin-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #ffffff;
+      padding: 6px;
+      border: 5px solid #facc15;
+      box-shadow: 0 0 0 3px #b45309, 0 12px 30px rgba(0,0,0,0.65);
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .rzp-coin-face.back {
+      transform: rotateY(180deg);
+    }
+
+    .rzp-coin-face img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    .rzp-tick {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #16a34a;
+      color: #fff;
+      border: 3px solid #fff;
+      font-size: 19px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transform: scale(0);
+      animation: rzpTickPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 1.05s forwards;
+      z-index: 5;
+    }
+
+    @keyframes rzpTickPop {
+      to { transform: scale(1); }
+    }
+
+    .welcome-box {
+      text-align: center;
+      padding: 0 16px;
+      z-index: 2;
+    }
+
+    .welcome-designer-text {
+      font-family: 'Cinzel Decorative', 'Righteous', serif;
+      font-size: clamp(1.6rem, 5.5vw, 3.2rem);
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 2.5px;
+      line-height: 1.2;
+      text-transform: uppercase;
+      text-shadow:
+        0 2px 0 #fde047,
+        0 4px 0 #ca8a04,
+        0 8px 20px rgba(0, 0, 0, 0.85);
+    }
+
+    .welcome-line {
+      width: 190px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #fde047, #ffffff, #fde047, transparent);
+      margin: 10px auto;
+      border-radius: 4px;
+    }
+
+    .welcome-sub {
+      font-family: 'Righteous', sans-serif;
+      color: #fef08a;
+      font-size: clamp(0.78rem, 2.4vw, 1rem);
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.75);
+    }
+
+    /* =====================================================
+       2. TOAST NOTIFICATION BAR
+       ===================================================== */
+    #toastBox {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      border-left: 4px solid #22c55e;
+      z-index: 99990;
+      transition: transform 0.25s ease;
+      pointer-events: none;
+      max-width: 92vw;
+      text-align: center;
+    }
+
+    #toastBox.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* =====================================================
+       3. USER-FRIENDLY TOP HEADER & CONTROL PANEL
+       ===================================================== */
+    .portal-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: #fff;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 500;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-brand img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 2px;
+      object-fit: contain;
+    }
+
+    .header-brand h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .header-brand p {
+      font-size: 0.73rem;
+      color: #bfdbfe;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 0.81rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      user-select: none;
+      transition: transform 0.1s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-success { background: #16a34a; color: #fff; }
+    .btn-warning { background: #d97706; color: #fff; }
+    .btn-danger  { background: #dc2626; color: #fff; }
+    .btn-dark    { background: #334155; color: #fff; }
+    .btn-purple  { background: #7c3aed; color: #fff; }
+    .btn-outline { background: #fff; color: #0f172a; border: 1.5px solid #94a3b8; }
+
+    .control-panel {
+      max-width: 1300px;
+      margin: 14px auto;
+      padding: 16px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+      border: 1px solid #cbd5e1;
+    }
+
+    .toolbar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 5px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid #94a3b8;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      outline: none;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .form-control:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    .selection-bar {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1.5px dashed #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .student-chips {
+      max-height: 130px;
+      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+    }
+
+    .student-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      background: #fff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .student-chip.active {
+      background: #dbeafe;
+      border-color: #1d4ed8;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+  /* =====================================================
+       4. A4 PAGE & ADMIT CARD LAYOUT (COLOUR + B&W PERFECT)
+       ===================================================== */
+    .preview-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 10px 60px;
+      width: 100%;
+    }
+
+    .a4-sheet {
+      width: 210mm;
+      min-height: 297mm;
+      background: #ffffff;
+      padding: 5mm 6mm;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.16);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 4mm;
+      position: relative;
+    }
+
+    @media screen and (max-width: 820px) {
+      body:not(.clean-print-mode) .a4-sheet {
+        width: 100%;
+        min-height: auto;
+        padding: 10px;
+        gap: 18px;
+      }
+      body:not(.clean-print-mode) .admit-card-unit {
+        width: 100% !important;
+      }
+      body:not(.clean-print-mode) .admit-card {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 265px;
+      }
+    }
+
+    .admit-card-unit {
+      width: 198mm;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Card Action Bar (Screen Only) */
+    .card-screen-tools {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px 8px 0 0;
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .card-screen-tools .tool-btns {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      border: none;
+      padding: 6px 11px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mini-btn:active {
+      transform: scale(0.94);
+    }
+
+    /* Printable Admit Card Box */
+    .admit-card {
+      width: 198mm;
+      border: 2.2px solid #000000;
+      border-radius: 4px;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.4mm 3.2mm;
+    }
+
+    /* Ratio Mode 3 (3 cards per A4 page, OR single student card) */
+    .admit-card.ratio-3 {
+      height: 92mm;
+    }
+
+    /* Ratio Mode 2 (2 cards per A4 page) */
+    .admit-card.ratio-2 {
+      height: 139mm;
+      padding: 3.5mm 4.2mm;
+    }
+
+    /* Watermark Logo in Background */
+    .admit-watermark {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64mm;
+      height: 64mm;
+      object-fit: contain;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .admit-card.ratio-2 .admit-watermark {
+      width: 86mm;
+      height: 86mm;
+    }
+
+    .admit-content-layer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+      gap: 1mm;
+    }
+
+    /* Card Header */
+    .ac-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.8px solid #000000;
+      padding-bottom: 1.2mm;
+      gap: 2.5mm;
+    }
+
+    .ac-logo {
+      width: 13.5mm;
+      height: 13.5mm;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .admit-card.ratio-2 .ac-logo {
+      width: 17mm;
+      height: 17mm;
+    }
+
+    .ac-title-block {
+      text-align: center;
+      flex: 1;
+      line-height: 1.15;
+    }
+
+    .ac-school-name {
+      font-size: 11.5pt;
+      font-weight: 900;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .admit-card.ratio-2 .ac-school-name {
+      font-size: 14pt;
+    }
+
+    .ac-school-sub {
+      font-size: 6.8pt;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .ac-exam-badge {
+      display: inline-block;
+      margin-top: 0.7mm;
+      background: #1e3a8a;
+      color: #ffffff;
+      border: 1.2px solid #000000;
+      font-size: 7.2pt;
+      font-weight: 800;
+      padding: 0.4mm 3.2mm;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .ac-right-meta {
+      text-align: right;
+      font-size: 7pt;
+      font-weight: 800;
+      color: #000000;
+      line-height: 1.35;
+      flex-shrink: 0;
+      border: 1.4px solid #000000;
+      padding: 1mm 2mm;
+      border-radius: 3px;
+      background: #f8fafc;
+    }
+
+    /* Student Info Section (Clean 6 Fields - No SR No, No Mobile) */
+    .ac-body-top {
+      display: flex;
+      align-items: stretch;
+      gap: 2.5mm;
+      margin-top: 0.8mm;
+    }
+
+    .ac-student-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.25fr 1.25fr 0.9fr;
+      gap: 1mm 2.5mm;
+      border: 1.4px solid #000000;
+      background: rgba(248, 250, 252, 0.88);
+      padding: 1.4mm 2.4mm;
+      border-radius: 3px;
+      font-size: 7.5pt;
+      align-content: center;
+    }
+
+    .admit-card.ratio-2 .ac-student-grid {
+      font-size: 9pt;
+      padding: 2.2mm 3.2mm;
+      gap: 1.8mm 3.2mm;
+    }
+
+    @media screen and (max-width: 600px) {
+      body:not(.clean-print-mode) .ac-student-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ac-field {
+      display: flex;
+      align-items: baseline;
+      gap: 1.2mm;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .ac-label {
+      font-weight: 700;
+      color: #1e293b;
+      flex-shrink: 0;
+    }
+
+    .ac-val {
+      font-weight: 900;
+      color: #000000;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    /* Photo Box - ONLY rendered when student has a saved photo */
+    .ac-photo-box {
+      width: 19.5mm;
+      height: 22.5mm;
+      border: 1.5px solid #000000;
+      border-radius: 2px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #fff;
+    }
+
+    .admit-card.ratio-2 .ac-photo-box {
+      width: 25mm;
+      height: 30mm;
+    }
+
+    .ac-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Exam Schedule Table */
+    .ac-schedule-wrap {
+      margin-top: 0.8mm;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .ac-schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 6.6pt;
+    }
+
+    .admit-card.ratio-2 .ac-schedule-table {
+      font-size: 8.2pt;
+    }
+
+    .ac-schedule-table th,
+    .ac-schedule-table td {
+      border: 1.2px solid #000000;
+      padding: 0.55mm 1.4mm;
+      text-align: center;
+      color: #000000;
+    }
+
+    .admit-card.ratio-2 .ac-schedule-table th,
+    .admit-card.ratio-2 .ac-schedule-table td {
+      padding: 1.2mm 2mm;
+    }
+
+    .ac-schedule-table th {
+      background: #e2e8f0;
+      color: #000000;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .ac-schedule-table td {
+      font-weight: 700;
+    }
+
+    /* Footer + Advance Level Verification Badge */
+    .ac-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 0.8mm;
+      padding-top: 0.8mm;
+      border-top: 1.2px dashed #000000;
+      font-size: 6.5pt;
+      gap: 2mm;
+    }
+
+    .admit-card.ratio-2 .ac-footer {
+      font-size: 7.8pt;
+    }
+
+    .ac-instructions {
+      font-size: 5.9pt;
+      color: #000000;
+      font-weight: 700;
+      max-width: 40%;
+      line-height: 1.22;
+    }
+
+    /* ADVANCE LEVEL MULTI-LAYER OFFICIAL VERIFICATION SEAL */
+    .adv-verified-seal {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.6mm;
+      border: 2px double #0f5132;
+      outline: 1px solid #0f5132;
+      outline-offset: 1px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      color: #0f5132;
+      padding: 0.6mm 2.4mm;
+      border-radius: 4px;
+      transform: rotate(-1.5deg);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      flex-shrink: 0;
+    }
+
+    .adv-seal-icon {
+      width: 7.2mm;
+      height: 7.2mm;
+      flex-shrink: 0;
+    }
+
+    .admit-card.ratio-2 .adv-seal-icon {
+      width: 9mm;
+      height: 9mm;
+    }
+
+    .adv-seal-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.08;
+      text-align: left;
+    }
+
+    .adv-seal-top {
+      font-size: 5pt;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: #1e3a8a;
+    }
+
+    .adv-seal-main {
+      font-size: 6.8pt;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #0f5132;
+    }
+
+    .adv-seal-sub {
+      font-size: 4.8pt;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: #000000;
+    }
+
+    .ac-sign-block {
+      display: flex;
+      gap: 5mm;
+      text-align: center;
+      font-weight: 800;
+      color: #000000;
+      flex-shrink: 0;
+    }
+
+    /* =====================================================
+       5. BLACK & WHITE (B&W) HIGH-CONTRAST PRINT MODE
+       ===================================================== */
+    body.bw-print-mode .admit-card,
+    body.bw-print-mode .admit-card * {
+      color: #000000 !important;
+      border-color: #000000 !important;
+    }
+
+    body.bw-print-mode .ac-exam-badge {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 2px solid #000000 !important;
+    }
+
+    body.bw-print-mode .ac-schedule-table th,
+    body.bw-print-mode .ac-student-grid,
+    body.bw-print-mode .ac-right-meta {
+      background: #ffffff !important;
+    }
+
+    body.bw-print-mode .adv-verified-seal {
+      background: #ffffff !important;
+      border: 2px double #000000 !important;
+      outline: 1px solid #000000 !important;
+    }
+
+    body.bw-print-mode .admit-watermark,
+    body.bw-print-mode .ac-logo {
+      filter: grayscale(100%) contrast(135%) !important;
+    }
+
+    /* =====================================================
+       6. MODALS
+       ===================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.78);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      width: 100%;
+      max-width: 680px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      background: #1e3a8a;
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 0.94rem;
+    }
+
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tt-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr 1.5fr 1.2fr auto;
+      gap: 6px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    @media screen and (max-width: 560px) {
+      .tt-row {
+        grid-template-columns: 1fr 1fr;
+        background: #f8fafc;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+      }
+    }
+
+    .camera-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #cameraVideo {
+      width: 100%;
+      max-width: 290px;
+      border-radius: 8px;
+      border: 3px solid #1e3a8a;
+      background: #000;
+    }
+
+    .saved-photo-preview-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px;
+      background: #fef2f2;
+      border: 1.5px solid #fca5a5;
+      border-radius: 8px;
+    }
+
+    .saved-photo-preview-box img {
+      width: 90px;
+      height: 108px;
+      object-fit: cover;
+      border: 2px solid #0f172a;
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    /* Clean Print Mode Top Bar */
+    #printModeTopBar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 99998;
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 16px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    body.clean-print-mode #printModeTopBar {
+      display: flex;
+    }
+
+    body.clean-print-mode .portal-header,
+    body.clean-print-mode .control-panel,
+    body.clean-print-mode .card-screen-tools {
+      display: none !important;
+    }
+
+    /* =====================================================
+       7. STRICT A4 PRINT MEDIA RULES
+       ===================================================== */
+    @page {
+      size: A4 portrait;
+      margin: 0mm;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+      }
+      #splashScreen,
+      #toastBox,
+      #printModeTopBar,
+      .portal-header,
+      .control-panel,
+      .card-screen-tools,
+      .modal-backdrop,
+      .no-print {
+        display: none !important;
+      }
+      .preview-wrapper {
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+        display: block !important;
+      }
+      .a4-sheet {
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        padding: 5mm 6mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4mm !important;
+      }
+      .a4-sheet:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+      .admit-card-unit {
+        width: 198mm !important;
+      }
+      .admit-card {
+        width: 198mm !important;
+      }
+      .admit-card.ratio-3 {
+        height: 92mm !important;
+      }
+      .admit-card.ratio-2 {
+        height: 139mm !important;
+      }
+      .ac-student-grid {
+        grid-template-columns: 1.25fr 1.25fr 0.9fr !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. RAZORPAY COIN FLIP + FULL PAGE COLOR CHANGE SPLASH -->
+  <div id="splashScreen" data-action="close-splash">
+    <div class="rzp-coin-wrapper">
+      <div class="rzp-wave"></div>
+      <div class="rzp-wave w2"></div>
+      <div class="rzp-coin-3d">
+        <div class="rzp-coin-face front">
+          <img src="https://gsssdhankoli.github.io/Logo.png/logo.png" alt="Logo" />
+        </div>
+        <div class="rzp-coin-face back">
+          <img src="https://gsssdhankoli.github.io/Logo.png/logo.png" alt="Logo" />
+        </div>
+      </div>
+      <div class="rzp-tick">✓</div>
+    </div>
+
+    <div class="welcome-box">
+      <div class="welcome-designer-text">WELCOME HARFOOL SINGH</div>
+      <div class="welcome-line"></div>
+      <div class="welcome-sub">GURUKUL SENIOR SECONDARY SCHOOL, DHANKOLI</div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBox"></div>
+
+  <!-- PRINT PREVIEW MODE TOP BAR -->
+  <div id="printModeTopBar" class="no-print">
+    <span style="font-size:0.85rem; font-weight:700;">🖨️ A4 Print Preview Mode (Exact Size)</span>
+    <div style="display:flex; gap:8px;">
+      <button type="button" class="btn btn-success" data-action="trigger-browser-print">🖨️ Print / Save PDF</button>
+      <button type="button" class="btn btn-danger" data-action="exit-print-mode">✕ वापस एडिट मोड में जाएं</button>
+    </div>
+  </div>
+
+  <!-- 2. TOP HEADER -->
+  <header class="portal-header no-print">
+    <div class="header-brand">
+      <img src="https://gsssdhankoli.github.io/Logo.png/logo.png" alt="Logo" />
+      <div>
+        <h1>GURUKUL SR. SEC. SCHOOL, DHANKOLI</h1>
+        <p>Half Yearly Admit Card Portal | Director: R.C. Royal | Chairman: H.S. Royal</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn btn-warning" data-action="open-class-tt">📅 क्लास टाइम-टेबल</button>
+      <button type="button" class="btn btn-primary" data-action="open-add-student">➕ नया छात्र</button>
+      <button type="button" class="btn btn-dark" data-action="open-sheet-modal">🔗 Sheet Sync</button>
+      <button type="button" class="btn btn-success" data-action="print-selected">🖨️ Print Selected</button>
+    </div>
+  </header>
+
+  <!-- 3. USER-FRIENDLY CONTROL PANEL -->
+  <section class="control-panel no-print">
+    <div class="toolbar-grid">
+      <div class="form-group">
+        <label>1. क्लास चुनें (Select Class)</label>
+        <select id="classFilter" class="form-control">
+          <option value="ALL">सभी क्लास (All Classes)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>2. छात्र खोजें (Search Name / Roll No)</label>
+        <input type="text" id="searchBox" class="form-control" placeholder="छात्र का नाम या रोल नंबर लिखें..." />
+      </div>
+
+      <div class="form-group">
+        <label>3. A4 पेज कार्ड अनुपात (Cards Per A4 Page)</label>
+        <select id="layoutMode" class="form-control">
+          <option value="3">1 A4 पेज पर 3 एडमिट कार्ड (Ratio 3 - Default)</option>
+          <option value="2">1 A4 पेज पर 2 एडमिट कार्ड (Ratio 2)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>4. प्रिंट कलर मोड (Colour / B&W Print)</label>
+        <select id="printColorMode" class="form-control">
+          <option value="COLOR">🎨 Colour Print Mode</option>
+          <option value="BW">⚫⚪ Black & White Print (High Contrast)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>5. परीक्षा का नाम (Exam Heading)</label>
+        <input type="text" id="examTitleInput" class="form-control" value="HALF YEARLY EXAMINATION 2026-27" />
+      </div>
+    </div>
+
+    <div class="selection-bar">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:0.84rem; font-weight:800; color:#1e3a8a; background:#eff6ff; padding:5px 10px; border-radius:6px; border:1px solid #bfdbfe;">
+          चयनित छात्र: <span id="selectedCountBadge">0</span> / <span id="totalCountBadge">0</span>
+        </span>
+        <button type="button" class="btn btn-outline" data-action="select-all">☑️ पूरी क्लास चुनें</button>
+        <button type="button" class="btn btn-outline" data-action="deselect-all">🔲 चयन हटाएं</button>
+        <button type="button" class="btn btn-purple" data-action="enter-print-mode">👁️ Full A4 Preview</button>
+      </div>
+      <div style="font-size:0.76rem; color:#334155; font-weight:600;">
+        💡 नीचे किसी भी नाम पर टिक करके रैंडम छात्र चुनें, या किसी एक कार्ड पर <b>"Print 1 Card"</b> दबाएं।
+      </div>
+    </div>
+
+    <div id="studentChipsContainer" class="student-chips"></div>
+  </section>
+
+  <!-- 4. A4 ADMIT CARDS PREVIEW & PRINT AREA -->
+  <main id="previewWrapper" class="preview-wrapper"></main>
+
+  <!-- =====================================================
+       MODAL 1: EDIT / ADD STUDENT (CLEAN FIELDS)
+       ===================================================== -->
+  <div id="studentModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span id="studentModalTitle">✏️ छात्र विवरण एडिट करें</span>
+        <button type="button" class="btn btn-danger" style="padding:4px 10px;" data-action="close-modal" data-target="studentModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editInternalId" />
+        <div class="toolbar-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <div class="form-group">
+            <label>Roll_No (रोल नंबर)</label>
+            <input type="text" id="editRollNo" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Student_Name (छात्र का नाम)</label>
+            <input type="text" id="editStudentName" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Father_Name (पिता का नाम)</label>
+            <input type="text" id="editFatherName" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Mother_Name (माता का नाम)</label>
+            <input type="text" id="editMotherName" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Class (कक्षा)</label>
+            <input type="text" id="editClass" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>DOB (जन्मतिथि)</label>
+            <input type="text" id="editDOB" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-action="close-modal" data-target="studentModal">रद्द करें</button>
+        <button type="button" class="btn btn-success" data-action="save-student">💾 सेव करें (Save & Update)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       MODAL 2: TIMETABLE (CLASS BULK & SINGLE STUDENT)
+       ===================================================== -->
+  <div id="timetableModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 760px;">
+      <div class="modal-header">
+        <span id="ttModalTitle">📅 परीक्षा टाइम-टेबल सेट करें</span>
+        <button type="button" class="btn btn-danger" style="padding:4px 10px;" data-action="close-modal" data-target="timetableModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="ttTargetMode" value="CLASS" />
+        <input type="hidden" id="ttTargetStudentId" value="" />
+
+        <div id="ttClassSelectorWrap" style="margin-bottom:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:#eff6ff; padding:10px; border-radius:8px; border:1px solid #bfdbfe;">
+          <label style="font-weight:800; font-size:0.85rem; color:#1e3a8a;">क्लास चुनें:</label>
+          <select id="ttClassSelect" class="form-control" style="max-width:220px; font-weight:700;"></select>
+          <span style="font-size:0.76rem; color:#1e293b; font-weight:600;">(इस क्लास के सभी बच्चों के एडमिट कार्ड में यही विषय, तारीख और समय एक बार में सेव होगा)</span>
+        </div>
+
+        <div id="ttStudentBanner" style="display:none; margin-bottom:12px; padding:10px; background:#fef3c7; border-left:4px solid #d97706; font-size:0.82rem; font-weight:700;"></div>
+
+        <div id="ttRowsContainer"></div>
+
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" data-action="add-tt-row">➕ नया विषय जोड़ें</button>
+          <button type="button" class="btn btn-warning" id="applyToAllClassesBtn" data-action="copy-tt-all-classes">📋 यही टाइम-टेबल सभी क्लास में सेव करें</button>
+          <button type="button" class="btn btn-danger" data-action="clear-tt-rows">🗑️ सभी विषय खाली करें</button>
+          <button type="button" class="btn btn-outline" id="resetCustomScheduleBtn" style="display:none;" data-action="reset-student-tt">🔄 क्लास टाइम-टेबल वापस लगाएं</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-action="close-modal" data-target="timetableModal">बंद करें</button>
+        <button type="button" class="btn btn-success" data-action="save-tt">💾 टाइम-टेबल सेव करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       MODAL 3: CAMERA PHOTO CAPTURE + DELETE PHOTO OPTION
+       ===================================================== -->
+  <div id="cameraModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <span id="cameraModalTitle">📷 छात्र की फोटो सेट / डिलीट करें</span>
+        <button type="button" class="btn btn-danger" style="padding:4px 10px;" data-action="close-camera">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="camera-stage">
+          <!-- Existing Photo Preview + Delete Button inside Modal -->
+          <div id="modalExistingPhotoBox" class="saved-photo-preview-box">
+            <span style="font-size:0.78rem; font-weight:800; color:#991b1b;">वर्तमान सेव की गई फोटो:</span>
+            <img id="modalExistingPhotoImg" src="" alt="Saved Student Photo" />
+            <button type="button" class="btn btn-danger" style="width:100%;" data-action="delete-photo-inside-modal">
+              🗑️ यह फोटो डिलीट करें (Delete Photo)
+            </button>
+          </div>
+
+          <video id="cameraVideo" autoplay playsinline muted></video>
+          <canvas id="cameraCanvas" width="260" height="310" style="display:none;"></canvas>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; width:100%;">
+            <button type="button" class="btn btn-success" data-action="capture-photo">📸 Click & Save Photo</button>
+            <button type="button" class="btn btn-dark" data-action="switch-camera">🔄 कैमरा बदलें</button>
+          </div>
+
+          <div style="width:100%; border-top:1px dashed #cbd5e1; padding-top:10px; text-align:center;">
+            <label class="btn btn-warning" style="width:100%; cursor:pointer;">
+              📷 मोबाइल कैमरा / गैलरी से फोटो चुनें
+              <input type="file" id="directPhotoInput" accept="image/*" capture="environment" style="display:none;" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       MODAL 4: GOOGLE SHEET SYNC (PERMANENTLY CONNECTED)
+       ===================================================== -->
+  <div id="sheetModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>🔗 Google Sheet (`Sheet1`) कनेक्शन</span>
+        <button type="button" class="btn btn-danger" style="padding:4px 10px;" data-action="close-modal" data-target="sheetModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>आपकी Google Sheet का लिंक (डिफ़ॉल्ट रूप से सेट है):</label>
+          <input type="text" id="sheetUrlInput" class="form-control" />
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+          <button type="button" class="btn btn-success" style="flex:1;" data-action="sync-sheet">🔄 अभी Google Sheet से ताज़ा डेटा सिंक करें</button>
+        </div>
+
+        <div style="border-top:1px dashed #cbd5e1; padding-top:12px; margin-bottom:10px;">
+          <label style="font-size:0.78rem; font-weight:700; color:#1e3a8a; display:block; margin-bottom:6px;">
+            ऑफलाइन विकल्प: सीधे CSV फाइल अपलोड करें:
+          </label>
+          <label class="btn btn-primary" style="width:100%; cursor:pointer;">
+            📂 CSV फाइल चुनें (Sheet1)
+            <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none;" />
+          </label>
+        </div>
+
+        <div style="background:#f0fdf4; padding:10px; border-radius:6px; border:1px solid #86efac; font-size:0.76rem; color:#14532d; line-height:1.5;">
+          ✔ <b>Auto-Save Memory Active:</b> एक बार शीट सिंक होने के बाद पेज रिफ्रेश करने पर भी डेटा कभी गायब नहीं होगा।
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-action="close-modal" data-target="sheetModal">बंद करें</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // =====================================================
+      // 1. SPLASH REMOVAL & TOAST NOTIFICATION
+      // =====================================================
+      function removeSplash() {
+        var sp = document.getElementById("splashScreen");
+        if (sp && sp.parentNode) {
+          sp.parentNode.removeChild(sp);
+        }
+      }
+      setTimeout(removeSplash, 2300);
+
+      var toastTimer = null;
+      function showToast(msg) {
+        var box = document.getElementById("toastBox");
+        if (!box) return;
+        box.textContent = msg;
+        box.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          box.classList.remove("show");
+        }, 3200);
+      }
+
+      // =====================================================
+      // 2. PERMANENT DOUBLE MEMORY (IndexedDB + localStorage)
+      //    Ensures data NEVER disappears on refresh!
+      // =====================================================
+      var DEFAULT_GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1k_BqjyuZWoKbBy-rx5SWfkhoiSRrIXonc09eXzwKVcI/edit?usp=drivesdk";
+      var SCHOOL_LOGO = "https://gsssdhankoli.github.io/Logo.png/logo.png";
+
+      var KEYS = {
+        STUDENTS: "GSSS_PORTAL_STUDENTS_V5",
+        EDITS: "GSSS_PORTAL_EDITS_V5",
+        CLASS_TT: "GSSS_PORTAL_CLASS_TT_V5",
+        STUDENT_TT: "GSSS_PORTAL_STUDENT_TT_V5",
+        PHOTOS: "GSSS_PORTAL_PHOTOS_V5",
+        SHEET_URL: "GSSS_PORTAL_SHEET_URL_V5",
+        EXAM_TITLE: "GSSS_PORTAL_EXAM_TITLE_V5",
+        PRINT_COLOR: "GSSS_PORTAL_PRINT_COLOR_V5"
+      };
+
+      var memCache = {};
+      var idbInstance = null;
+
+      function openPortalIDB() {
+        return new Promise(function (resolve) {
+          try {
+            if (!window.indexedDB) return resolve(null);
+            var req = indexedDB.open("GurukulAdmitCardPermanentDB_V5", 1);
+            req.onupgradeneeded = function (e) {
+              var db = e.target.result;
+              if (!db.objectStoreNames.contains("kv")) {
+                db.createObjectStore("kv", { keyPath: "k" });
+              }
+            };
+            req.onsuccess = function (e) {
+              idbInstance = e.target.result;
+              resolve(idbInstance);
+            };
+            req.onerror = function () { resolve(null); };
+          } catch (err) {
+            resolve(null);
+          }
+        });
+      }
+
+      function readAllFromIDB() {
+        return new Promise(function (resolve) {
+          if (!idbInstance) return resolve({});
+          try {
+            var tx = idbInstance.transaction("kv", "readonly");
+            var store = tx.objectStore("kv");
+            var req = store.getAll();
+            req.onsuccess = function () {
+              var map = {};
+              (req.result || []).forEach(function (item) {
+                map[item.k] = item.v;
+              });
+              resolve(map);
+            };
+            req.onerror = function () { resolve({}); };
+          } catch (e) {
+            resolve({});
+          }
+        });
+      }
+
+      function sGet(k) {
+        try {
+          var lsVal = localStorage.getItem(k);
+          if (lsVal !== null && lsVal !== undefined) return lsVal;
+        } catch (e) {}
+        return memCache[k] !== undefined ? memCache[k] : null;
+      }
+
+      function sSet(k, v) {
+        memCache[k] = v;
+        try { localStorage.setItem(k, v); } catch (e) {}
+        try {
+          if (idbInstance) {
+            var tx = idbInstance.transaction("kv", "readwrite");
+            tx.objectStore("kv").put({ k: k, v: v });
+          }
+        } catch (e) {}
+      }
+
+      // =====================================================
+      // 3. STATE VARIABLES (NO DEFAULT HARDCODED STUDENTS/TT)
+      // =====================================================
+      var studentsList = [];
+      var localEditsMap = {}; // Preserves manual student edits across sheet syncs
+      var classTimetables = {};
+      var studentCustomSchedules = {};
+      var photoMap = {};
+      var selectedStudentIds = new Set();
+      var singlePrintTempIds = null;
+
+      var activeCameraStudentId = null;
+      var mediaStream = null;
+      var currentFacingMode = "environment";
+
+      async function bootPortal() {
+        await openPortalIDB();
+        var idbData = await readAllFromIDB();
+        Object.keys(idbData).forEach(function (k) {
+          if (idbData[k] !== undefined && idbData[k] !== null) {
+            memCache[k] = idbData[k];
+            try {
+              if (!localStorage.getItem(k)) localStorage.setItem(k, idbData[k]);
+            } catch (e) {}
+          }
+        });
+
+        try {
+          var stRaw = sGet(KEYS.STUDENTS);
+          if (stRaw) studentsList = JSON.parse(stRaw) || [];
+        } catch (e) { studentsList = []; }
+
+        try {
+          var edRaw = sGet(KEYS.EDITS);
+          if (edRaw) localEditsMap = JSON.parse(edRaw) || {};
+        } catch (e) { localEditsMap = {}; }
+
+        try {
+          var cttRaw = sGet(KEYS.CLASS_TT);
+          if (cttRaw) classTimetables = JSON.parse(cttRaw) || {};
+        } catch (e) { classTimetables = {}; }
+
+        try {
+          var sttRaw = sGet(KEYS.STUDENT_TT);
+          if (sttRaw) studentCustomSchedules = JSON.parse(sttRaw) || {};
+        } catch (e) { studentCustomSchedules = {}; }
+
+        try {
+          var phRaw = sGet(KEYS.PHOTOS);
+          if (phRaw) photoMap = JSON.parse(phRaw) || {};
+        } catch (e) { photoMap = {}; }
+
+        var savedUrl = sGet(KEYS.SHEET_URL) || DEFAULT_GOOGLE_SHEET_URL;
+        document.getElementById("sheetUrlInput").value = savedUrl;
+        sSet(KEYS.SHEET_URL, savedUrl);
+
+        var savedTitle = sGet(KEYS.EXAM_TITLE);
+        if (savedTitle) document.getElementById("examTitleInput").value = savedTitle;
+
+        var savedColorMode = sGet(KEYS.PRINT_COLOR) || "COLOR";
+        document.getElementById("printColorMode").value = savedColorMode;
+        applyPrintColorMode(savedColorMode);
+
+        // Render saved students immediately so refresh NEVER shows blank
+        populateClassDropdowns();
+        selectAllFiltered(true);
+
+        // Sync fresh data from the default/saved Google Sheet in background
+        syncFromGoogleSheet(studentsList.length > 0);
+      }
+
+      function savePortalData() {
+        sSet(KEYS.STUDENTS, JSON.stringify(studentsList));
+        sSet(KEYS.EDITS, JSON.stringify(localEditsMap));
+        sSet(KEYS.CLASS_TT, JSON.stringify(classTimetables));
+        sSet(KEYS.STUDENT_TT, JSON.stringify(studentCustomSchedules));
+      }
+
+      function applyPrintColorMode(mode) {
+        if (mode === "BW") {
+          document.body.classList.add("bw-print-mode");
+        } else {
+          document.body.classList.remove("bw-print-mode");
+        }
+      }
+
+      // =====================================================
+      // 4. FILTERS & STUDENT SELECTION
+      // =====================================================
+      var CLASS_ORDER = ["PP3+", "PP4+", "PP5+", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eight", "Ninth", "Tenth", "Eleventh", "Twelfth", "9", "10", "11", "12"];
+
+      function getUniqueClasses() {
+        var set = {};
+        studentsList.forEach(function (s) {
+          var c = String(s.Class || "").trim();
+          if (c) set[c] = true;
+        });
+        return Object.keys(set).sort(function (a, b) {
+          var ia = CLASS_ORDER.indexOf(a);
+          var ib = CLASS_ORDER.indexOf(b);
+          if (ia !== -1 && ib !== -1) return ia - ib;
+          if (ia !== -1) return -1;
+          if (ib !== -1) return 1;
+          return a.localeCompare(b, undefined, { numeric: true });
+        });
+      }
+
+      function populateClassDropdowns() {
+        var classes = getUniqueClasses();
+        var filterEl = document.getElementById("classFilter");
+        var prev = filterEl.value || "ALL";
+        filterEl.innerHTML = '<option value="ALL">सभी क्लास (All - ' + studentsList.length + ' छात्र)</option>' +
+          classes.map(function (c) {
+            var count = studentsList.filter(function (s) { return String(s.Class).trim() === c; }).length;
+            return '<option value="' + c + '">Class: ' + c + ' (' + count + ' छात्र)</option>';
+          }).join("");
+
+        var hasPrev = Array.prototype.some.call(filterEl.options, function (o) { return o.value === prev; });
+        if (hasPrev) filterEl.value = prev;
+
+        var ttSelect = document.getElementById("ttClassSelect");
+        if (classes.length > 0) {
+          ttSelect.innerHTML = classes.map(function (c) {
+            return '<option value="' + c + '">Class: ' + c + '</option>';
+          }).join("");
+        } else {
+          ttSelect.innerHTML = '<option value="General">General</option>';
+        }
+      }
+
+      function getFilteredStudents() {
+        var cls = document.getElementById("classFilter").value;
+        var q = document.getElementById("searchBox").value.trim().toLowerCase();
+        return studentsList.filter(function (s) {
+          var matchCls = (cls === "ALL") || (String(s.Class).trim() === cls);
+          var matchQ = !q ||
+            String(s.Student_Name || "").toLowerCase().indexOf(q) !== -1 ||
+            String(s.Roll_No || "").toLowerCase().indexOf(q) !== -1 ||
+            String(s.Father_Name || "").toLowerCase().indexOf(q) !== -1;
+          return matchCls && matchQ;
+        });
+      }
+
+      function selectAllFiltered(flag) {
+        var filtered = getFilteredStudents();
+        if (flag) {
+          filtered.forEach(function (s) { selectedStudentIds.add(String(s.id)); });
+        } else {
+          filtered.forEach(function (s) { selectedStudentIds.delete(String(s.id)); });
+        }
+        renderStudentChips();
+        renderAdmitCards();
+      }
+
+      function renderStudentChips() {
+        var filtered = getFilteredStudents();
+        var container = document.getElementById("studentChipsContainer");
+        document.getElementById("selectedCountBadge").textContent = selectedStudentIds.size;
+        document.getElementById("totalCountBadge").textContent = filtered.length;
+
+        if (filtered.length === 0) {
+          container.innerHTML = '<span style="font-size:0.8rem; color:#475569; font-weight:600;">कोई छात्र नहीं मिला। ऊपर "🔗 Sheet Sync" से डेटा लोड करें या नया छात्र जोड़ें।</span>';
+          return;
+        }
+
+        container.innerHTML = filtered.map(function (s) {
+          var id = String(s.id);
+          var active = selectedStudentIds.has(id);
+          var hasPhoto = !!photoMap[id];
+          return '<div class="student-chip ' + (active ? 'active' : '') + '" data-action="toggle-student" data-id="' + id + '">' +
+            '<input type="checkbox" ' + (active ? 'checked' : '') + ' style="pointer-events:none;" />' +
+            '<span><b>' + (s.Roll_No || "-") + '</b> - ' + s.Student_Name + ' (' + s.Class + ') ' + (hasPhoto ? '📷' : '') + '</span>' +
+          '</div>';
+        }).join("");
+      }
+
+      // =====================================================
+      // 5. RENDER A4 ADMIT CARDS (NO SR NO, NO MOBILE, ADV BADGE)
+      // =====================================================
+      function getScheduleForStudent(st) {
+        var id = String(st.id);
+        if (studentCustomSchedules[id] && studentCustomSchedules[id].length > 0) {
+          return studentCustomSchedules[id];
+        }
+        var cls = String(st.Class || "").trim();
+        return classTimetables[cls] || [];
+      }
+
+      function renderAdmitCards() {
+        var wrapper = document.getElementById("previewWrapper");
+        var examTitle = document.getElementById("examTitleInput").value || "HALF YEARLY EXAMINATION 2026-27";
+        var layoutMode = parseInt(document.getElementById("layoutMode").value, 10) || 3;
+
+        var activeStudents = [];
+        if (singlePrintTempIds) {
+          activeStudents = studentsList.filter(function (s) {
+            return singlePrintTempIds.indexOf(String(s.id)) !== -1;
+          });
+        } else {
+          activeStudents = studentsList.filter(function (s) {
+            return selectedStudentIds.has(String(s.id));
+          });
+        }
+
+        if (activeStudents.length === 0) {
+          wrapper.innerHTML = '<div class="no-print" style="padding:35px; background:#fff; border-radius:10px; text-align:center; color:#1e293b; font-weight:700; width:100%; max-width:620px; border:1.5px solid #cbd5e1;">प्रिंट या प्रीव्यू देखने के लिए कृपया ऊपर से कम से कम एक छात्र चुनें।</div>';
+          return;
+        }
+
+        // Single student print ALWAYS stays in Ratio-3 size (92mm height)
+        var isSingle = (activeStudents.length === 1);
+        var effectiveRatioClass = isSingle ? "ratio-3" : (layoutMode === 2 ? "ratio-2" : "ratio-3");
+        var cardsPerPage = isSingle ? 3 : layoutMode;
+
+        var pages = [];
+        for (var i = 0; i < activeStudents.length; i += cardsPerPage) {
+          pages.push(activeStudents.slice(i, i + cardsPerPage));
+        }
+
+        wrapper.innerHTML = pages.map(function (pageStudents) {
+          var cardsHtml = pageStudents.map(function (st) {
+            return buildAdmitCardHTML(st, examTitle, effectiveRatioClass);
+          }).join("");
+          return '<div class="a4-sheet">' + cardsHtml + '</div>';
+        }).join("");
+      }
+
+      function buildAdvanceVerifiedBadgeSVG() {
+        return '<svg class="adv-seal-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">' +
+          '<polygon points="32,2 37,8 45,5 47,13 55,14 54,22 61,27 57,34 61,41 54,46 55,54 47,55 45,63 37,60 32,66 27,60 19,63 17,55 9,54 10,46 3,41 7,34 3,27 10,22 9,14 17,13 19,5 27,8" fill="#0f5132" stroke="#000" stroke-width="1.5"/>' +
+          '<circle cx="32" cy="34" r="22" fill="#ffffff" stroke="#000" stroke-width="1.5"/>' +
+          '<circle cx="32" cy="34" r="18.5" fill="none" stroke="#0f5132" stroke-width="1.2" stroke-dasharray="2.5,1.5"/>' +
+          '<path d="M22 34.5 L29 41.5 L43 26.5" fill="none" stroke="#0f5132" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
+      }
+
+      function buildAdmitCardHTML(st, examTitle, ratioClass) {
+        var id = String(st.id);
+        var photoDataUrl = photoMap[id] || null;
+        var schedule = getScheduleForStudent(st);
+        var hasCustomTT = !!(studentCustomSchedules[id] && studentCustomSchedules[id].length > 0);
+
+        var scheduleRows = schedule.length > 0
+          ? schedule.map(function (r, idx) {
+              return '<tr>' +
+                '<td>' + (idx + 1) + '</td>' +
+                '<td>' + (r.date || "-") + '</td>' +
+                '<td>' + (r.day || "-") + '</td>' +
+                '<td style="font-weight:900; text-align:left; padding-left:3mm;">' + (r.subject || "-") + '</td>' +
+                '<td>' + (r.time || "-") + '</td>' +
+              '</tr>';
+            }).join("")
+          : '<tr><td colspan="5" style="padding:2.5mm; font-weight:700;">परीक्षा समय-सारणी सेट करने के लिए ऊपर "📅 क्लास टाइम-टेबल" या "📅 विषय/तारीख" बटन दबाएं</td></tr>';
+
+        // If no photo is clicked, NO photo box or blank space appears
+        var photoSectionHtml = photoDataUrl
+          ? '<div class="ac-photo-box"><img src="' + photoDataUrl + '" alt="Photo" /></div>'
+          : '';
+
+        return '<div class="admit-card-unit">' +
+          '<div class="card-screen-tools no-print">' +
+            '<div>' +
+              '<b>' + st.Student_Name + '</b> &nbsp;|&nbsp; Roll No: <b>' + (st.Roll_No || "-") + '</b> &nbsp;|&nbsp; Class: <b>' + (st.Class || "-") + '</b>' +
+              (hasCustomTT ? '<span style="background:#facc15; color:#000; padding:2px 7px; border-radius:4px; margin-left:6px; font-weight:800;">Custom Timetable</span>' : '') +
+            '</div>' +
+            '<div class="tool-btns">' +
+              '<button type="button" class="mini-btn" style="background:#16a34a;" data-action="open-camera" data-id="' + id + '">' + (photoDataUrl ? '📷 Change/Delete Photo' : '📷 Click Photo') + '</button>' +
+              (photoDataUrl ? '<button type="button" class="mini-btn" style="background:#dc2626;" data-action="remove-photo" data-id="' + id + '">🗑️ Delete Photo</button>' : '') +
+              '<button type="button" class="mini-btn" style="background:#2563eb;" data-action="edit-student" data-id="' + id + '">✏️ Edit Card</button>' +
+              '<button type="button" class="mini-btn" style="background:#d97706;" data-action="student-tt" data-id="' + id + '">📅 विषय/तारीख</button>' +
+              '<button type="button" class="mini-btn" style="background:#7c3aed;" data-action="print-one" data-id="' + id + '">🖨️ Print 1 Card</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="admit-card ' + ratioClass + '">' +
+            '<img class="admit-watermark" src="' + SCHOOL_LOGO + '" alt="Watermark" />' +
+            '<div class="admit-content-layer">' +
+              '<!-- Header -->' +
+              '<div class="ac-header">' +
+                '<img class="ac-logo" src="' + SCHOOL_LOGO + '" alt="Logo" />' +
+                '<div class="ac-title-block">' +
+                  '<div class="ac-school-name">GURUKUL SENIOR SECONDARY SCHOOL</div>' +
+                  '<div class="ac-school-sub">BHADASAR ROAD, DHANKOLI | HELPLINE: 9772564359, 9887071127</div>' +
+                  '<div class="ac-exam-badge">' + examTitle + ' — ADMIT CARD</div>' +
+                '</div>' +
+                '<div class="ac-right-meta">' +
+                  '<div>ROLL NO: <span style="font-size:9pt; font-weight:900;">' + (st.Roll_No || "-") + '</span></div>' +
+                  '<div>CLASS: <span style="font-size:8pt; font-weight:900;">' + (st.Class || "-") + '</span></div>' +
+                '</div>' +
+              '</div>' +
+
+              '<!-- Student Info (Clean 6 Fields without SR No or Mobile) -->' +
+              '<div class="ac-body-top">' +
+                '<div class="ac-student-grid">' +
+                  '<div class="ac-field"><span class="ac-label">Student Name:</span><span class="ac-val">' + (st.Student_Name || "-") + '</span></div>' +
+                  '<div class="ac-field"><span class="ac-label">Father\'s Name:</span><span class="ac-val">' + (st.Father_Name || "-") + '</span></div>' +
+                  '<div class="ac-field"><span class="ac-label">Roll Number:</span><span class="ac-val">' + (st.Roll_No || "-") + '</span></div>' +
+                  '<div class="ac-field"><span class="ac-label">Mother\'s Name:</span><span class="ac-val">' + (st.Mother_Name || "-") + '</span></div>' +
+                  '<div class="ac-field"><span class="ac-label">Date of Birth:</span><span class="ac-val">' + (st.DOB || "-") + '</span></div>' +
+                  '<div class="ac-field"><span class="ac-label">Class:</span><span class="ac-val">' + (st.Class || "-") + '</span></div>' +
+                '</div>' +
+                photoSectionHtml +
+              '</div>' +
+
+              '<!-- Timetable Table -->' +
+              '<div class="ac-schedule-wrap">' +
+                '<table class="ac-schedule-table">' +
+                  '<thead>' +
+                    '<tr>' +
+                      '<th style="width:7%;">क्र.</th>' +
+                      '<th style="width:18%;">दिनांक (Date)</th>' +
+                      '<th style="width:15%;">वार (Day)</th>' +
+                      '<th style="width:36%;">विषय (Subject)</th>' +
+                      '<th style="width:24%;">समय (Exam Time)</th>' +
+                    '</tr>' +
+                  '</thead>' +
+                  '<tbody>' + scheduleRows + '</tbody>' +
+                '</table>' +
+              '</div>' +
+
+              '<!-- Footer with Advance Level Verification Seal -->' +
+              '<div class="ac-footer">' +
+                '<div class="ac-instructions">' +
+                  '• परीक्षा प्रारंभ होने से 30 मिनट पूर्व परीक्षा केंद्र पर उपस्थित हों।<br/>' +
+                  '• बिना प्रवेश-पत्र के परीक्षा कक्ष में बैठने की अनुमति नहीं होगी।' +
+                '</div>' +
+
+                '<div class="adv-verified-seal">' +
+                  buildAdvanceVerifiedBadgeSVG() +
+                  '<div class="adv-seal-text">' +
+                    '<span class="adv-seal-top">★ OFFICIAL SECURITY SEAL ★</span>' +
+                    '<span class="adv-seal-main">VERIFIED ADMIT CARD</span>' +
+                    '<span class="adv-seal-sub">GURUKUL SR. SEC. SCHOOL, DHANKOLI</span>' +
+                  '</div>' +
+                '</div>' +
+
+                '<div class="ac-sign-block">' +
+                  '<div><div style="height:3mm;"></div><div>परीक्षा प्रभारी</div></div>' +
+                  '<div><div style="font-weight:900; font-size:6.4pt;">R.C. Royal / H.S. Royal</div><div>निदेशक / चेयरमैन</div></div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      // =====================================================
+      // 6. EDIT / ADD STUDENT FUNCTIONS (PERSISTENT)
+      // =====================================================
+      function openEditStudentModal(id) {
+        var st = studentsList.find(function (s) { return String(s.id) === String(id); });
+        if (!st) return;
+        document.getElementById("studentModalTitle").textContent = "✏️ छात्र विवरण एडिट करें";
+        document.getElementById("editInternalId").value = st.id;
+        document.getElementById("editRollNo").value = st.Roll_No || "";
+        document.getElementById("editStudentName").value = st.Student_Name || "";
+        document.getElementById("editFatherName").value = st.Father_Name || "";
+        document.getElementById("editMotherName").value = st.Mother_Name || "";
+        document.getElementById("editClass").value = st.Class || "";
+        document.getElementById("editDOB").value = st.DOB || "";
+        document.getElementById("studentModal").classList.add("open");
+      }
+
+      function openAddStudentModal() {
+        document.getElementById("studentModalTitle").textContent = "➕ नया छात्र जोड़ें";
+        document.getElementById("editInternalId").value = "NEW_" + Date.now();
+        document.getElementById("editRollNo").value = "";
+        document.getElementById("editStudentName").value = "";
+        document.getElementById("editFatherName").value = "";
+        document.getElementById("editMotherName").value = "";
+        var curCls = document.getElementById("classFilter").value;
+        document.getElementById("editClass").value = curCls !== "ALL" ? curCls : "";
+        document.getElementById("editDOB").value = "";
+        document.getElementById("studentModal").classList.add("open");
+      }
+
+      function saveStudentEdit() {
+        var internalId = document.getElementById("editInternalId").value;
+        var roll = document.getElementById("editRollNo").value.trim();
+        var finalId = roll || internalId;
+        var updated = {
+          id: String(finalId),
+          Roll_No: roll,
+          Student_Name: document.getElementById("editStudentName").value.trim().toUpperCase(),
+          Father_Name: document.getElementById("editFatherName").value.trim().toUpperCase(),
+          Mother_Name: document.getElementById("editMotherName").value.trim().toUpperCase(),
+          DOB: document.getElementById("editDOB").value.trim(),
+          Class: document.getElementById("editClass").value.trim()
+        };
+
+        // Store in localEditsMap so sheet sync never overwrites user's manual edits
+        localEditsMap[String(finalId)] = updated;
+
+        var idx = studentsList.findIndex(function (s) { return String(s.id) === String(internalId); });
+        if (idx >= 0) {
+          selectedStudentIds.delete(String(internalId));
+          studentsList[idx] = updated;
+          selectedStudentIds.add(String(updated.id));
+        } else {
+          studentsList.unshift(updated);
+          selectedStudentIds.add(String(updated.id));
+        }
+
+        savePortalData();
+        populateClassDropdowns();
+        renderStudentChips();
+        renderAdmitCards();
+        document.getElementById("studentModal").classList.remove("open");
+        showToast("✅ छात्र का विवरण स्थायी रूप से सेव हो गया!");
+      }
+
+      // =====================================================
+      // 7. TIMETABLE MANAGER (CLASS BULK & SINGLE STUDENT)
+      // =====================================================
+      function openClassTimetableModal() {
+        document.getElementById("ttTargetMode").value = "CLASS";
+        document.getElementById("ttModalTitle").textContent = "📅 क्लास का टाइम-टेबल सेट करें";
+        document.getElementById("ttClassSelectorWrap").style.display = "flex";
+        document.getElementById("ttStudentBanner").style.display = "none";
+        document.getElementById("applyToAllClassesBtn").style.display = "inline-flex";
+        document.getElementById("resetCustomScheduleBtn").style.display = "none";
+
+        populateClassDropdowns();
+        var curCls = document.getElementById("classFilter").value;
+        if (curCls !== "ALL") {
+          document.getElementById("ttClassSelect").value = curCls;
+        }
+        loadClassTimetableInModal();
+        document.getElementById("timetableModal").classList.add("open");
+      }
+
+      function loadClassTimetableInModal() {
+        var cls = document.getElementById("ttClassSelect").value;
+        var sched = classTimetables[cls] || [];
+        renderTimetableRows(sched);
+      }
+
+      function openStudentTimetableModal(id) {
+        var st = studentsList.find(function (s) { return String(s.id) === String(id); });
+        if (!st) return;
+
+        document.getElementById("ttTargetMode").value = "STUDENT";
+        document.getElementById("ttTargetStudentId").value = String(st.id);
+        document.getElementById("ttModalTitle").textContent = "📅 व्यक्तिगत परीक्षा विषय व तारीख: " + st.Student_Name;
+        document.getElementById("ttClassSelectorWrap").style.display = "none";
+        document.getElementById("applyToAllClassesBtn").style.display = "none";
+        document.getElementById("resetCustomScheduleBtn").style.display = "inline-flex";
+
+        var banner = document.getElementById("ttStudentBanner");
+        banner.style.display = "block";
+        banner.textContent = "छात्र: " + st.Student_Name + " (Roll No: " + st.Roll_No + ", Class: " + st.Class + ") — यह बदलाव सिर्फ इसी छात्र के एडमिट कार्ड में सेव होगा।";
+
+        renderTimetableRows(getScheduleForStudent(st));
+        document.getElementById("timetableModal").classList.add("open");
+      }
+
+      function renderTimetableRows(schedule) {
+        var container = document.getElementById("ttRowsContainer");
+        container.innerHTML = "";
+        var rows = (schedule && schedule.length > 0)
+          ? schedule
+          : [{ date: "", day: "", subject: "", time: "" }];
+        rows.forEach(function (r) { addTimetableRow(r); });
+      }
+
+      function addTimetableRow(item) {
+        var r = item || { date: "", day: "", subject: "", time: "" };
+        var container = document.getElementById("ttRowsContainer");
+        var div = document.createElement("div");
+        div.className = "tt-row";
+        div.innerHTML =
+          '<input type="text" class="form-control tt-date" placeholder="दिनांक (DD-MM-YYYY)" value="' + (r.date || '') + '" />' +
+          '<input type="text" class="form-control tt-day" placeholder="वार (Day)" value="' + (r.day || '') + '" />' +
+          '<input type="text" class="form-control tt-subject" placeholder="विषय (Subject)" value="' + (r.subject || '') + '" />' +
+          '<input type="text" class="form-control tt-time" placeholder="समय (Time)" value="' + (r.time || '') + '" />' +
+          '<button type="button" class="btn btn-danger" style="padding:7px 11px;" data-action="remove-tt-row">🗑️</button>';
+        container.appendChild(div);
+      }
+
+      function readRowsFromModal() {
+        var rows = Array.prototype.slice.call(document.querySelectorAll("#ttRowsContainer .tt-row"));
+        return rows.map(function (r) {
+          return {
+            date: r.querySelector(".tt-date").value.trim(),
+            day: r.querySelector(".tt-day").value.trim(),
+            subject: r.querySelector(".tt-subject").value.trim(),
+            time: r.querySelector(".tt-time").value.trim()
+          };
+        }).filter(function (x) { return x.date || x.subject || x.day || x.time; });
+      }
+
+      function saveTimetableFromModal() {
+        var schedule = readRowsFromModal();
+        var mode = document.getElementById("ttTargetMode").value;
+
+        if (mode === "CLASS") {
+          var cls = document.getElementById("ttClassSelect").value;
+          classTimetables[cls] = schedule;
+          showToast("✅ Class " + cls + " के सभी छात्रों के लिए टाइम-टेबल सेव हो गया!");
+        } else {
+          var stId = document.getElementById("ttTargetStudentId").value;
+          studentCustomSchedules[stId] = schedule;
+          showToast("✅ छात्र का व्यक्तिगत टाइम-टेबल सेव हो गया!");
+        }
+
+        savePortalData();
+        renderAdmitCards();
+        document.getElementById("timetableModal").classList.remove("open");
+      }
+
+      // =====================================================
+      // 8. CAMERA PHOTO SYSTEM + DELETE PHOTO OPTION
+      // =====================================================
+      function openCameraModal(id) {
+        activeCameraStudentId = String(id);
+        var st = studentsList.find(function (s) { return String(s.id) === activeCameraStudentId; });
+        document.getElementById("cameraModalTitle").textContent = "📷 फोटो: " + (st ? st.Student_Name : "");
+
+        // Show existing photo preview & delete button inside modal if student already has a photo
+        var existingBox = document.getElementById("modalExistingPhotoBox");
+        var existingImg = document.getElementById("modalExistingPhotoImg");
+        if (photoMap[activeCameraStudentId]) {
+          existingImg.src = photoMap[activeCameraStudentId];
+          existingBox.style.display = "flex";
+        } else {
+          existingImg.src = "";
+          existingBox.style.display = "none";
+        }
+
+        document.getElementById("cameraModal").classList.add("open");
+        startCameraStream();
+      }
+
+      function startCameraStream() {
+        stopCameraStream();
+        try {
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+          navigator.mediaDevices.getUserMedia({
+            video: { facingMode: currentFacingMode, width: { ideal: 480 }, height: { ideal: 600 } },
+            audio: false
+          }).then(function (stream) {
+            mediaStream = stream;
+            var video = document.getElementById("cameraVideo");
+            if (video) video.srcObject = stream;
+          }).catch(function () {});
+        } catch (e) {}
+      }
+
+      function stopCameraStream() {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(function (t) { t.stop(); });
+          mediaStream = null;
+        }
+      }
+
+      function capturePhotoNow() {
+        var video = document.getElementById("cameraVideo");
+        if (!video || !video.srcObject) {
+          document.getElementById("directPhotoInput").click();
+          return;
+        }
+        var canvas = document.getElementById("cameraCanvas");
+        var ctx = canvas.getContext("2d");
+        var vw = video.videoWidth || 480;
+        var vh = video.videoHeight || 600;
+        var ratio = 260 / 310;
+        var sw = vw, sh = vh, sx = 0, sy = 0;
+
+        if (vw / vh > ratio) {
+          sw = vh * ratio;
+          sx = (vw - sw) / 2;
+        } else {
+          sh = vw / ratio;
+          sy = (vh - sh) / 2;
+        }
+
+        ctx.drawImage(video, sx, sy, sw, sh, 0, 0, 260, 310);
+        var dataUrl = canvas.toDataURL("image/jpeg", 0.78);
+        saveStudentPhoto(activeCameraStudentId, dataUrl);
+      }
+
+      function saveStudentPhoto(id, dataUrl) {
+        photoMap[String(id)] = dataUrl;
+        sSet(KEYS.PHOTOS, JSON.stringify(photoMap));
+        stopCameraStream();
+        document.getElementById("cameraModal").classList.remove("open");
+        renderStudentChips();
+        renderAdmitCards();
+        showToast("📷 फोटो पोर्टल मेमोरी में हमेशा के लिए सेव हो गई!");
+      }
+
+      function deleteStudentPhotoById(id) {
+        if (!id) return;
+        delete photoMap[String(id)];
+        sSet(KEYS.PHOTOS, JSON.stringify(photoMap));
+        var existingBox = document.getElementById("modalExistingPhotoBox");
+        if (existingBox) existingBox.style.display = "none";
+        renderStudentChips();
+        renderAdmitCards();
+        showToast("🗑️ छात्र की फोटो डिलीट कर दी गई है!");
+      }
+
+      // =====================================================
+      // 9. SHEET1 PARSER & CORS-FREE JSONP + FETCH LOADER
+      // =====================================================
+      function parseRawSheetRows(rows2D) {
+        var parsed = [];
+        var headerMap = null;
+
+        for (var i = 0; i < rows2D.length; i++) {
+          var row = rows2D[i].map(function (c) { return String(c == null ? "" : c).trim(); });
+          var nonEmpty = row.filter(Boolean);
+          if (nonEmpty.length < 2) continue;
+
+          var rowStr = row.join(" ").toLowerCase();
+          if (rowStr.indexOf("student_name") !== -1 || rowStr.indexOf("roll_no") !== -1 || rowStr.indexOf("sr_number") !== -1) {
+            headerMap = {};
+            row.forEach(function (colName, idx) {
+              var clean = colName.toLowerCase().replace(/[^a-z0-9]/g, "");
+              headerMap[clean] = idx;
+            });
+            continue;
+          }
+
+          var item = null;
+          if (headerMap) {
+            var getVal = function (keys, fallbackIdx) {
+              for (var k = 0; k < keys.length; k++) {
+                if (headerMap[keys[k]] !== undefined) return row[headerMap[keys[k]]] || "";
+              }
+              return row[fallbackIdx] || "";
+            };
+            item = {
+              Roll_No: getVal(["rollno", "rollnumber"], 2),
+              Student_Name: getVal(["studentname", "name"], 3),
+              Father_Name: getVal(["fathername", "fathersname"], 4),
+              Mother_Name: getVal(["mothername", "mothersname"], 5),
+              DOB: getVal(["dob", "dateofbirth"], 6),
+              Class: getVal(["class", "std"], 7)
+            };
+          } else {
+            item = {
+              Roll_No: row[2] || "",
+              Student_Name: row[3] || "",
+              Father_Name: row[4] || "",
+              Mother_Name: row[5] || "",
+              DOB: row[6] || "",
+              Class: row[7] || ""
+            };
+          }
+
+          if (!item.Student_Name && !item.Roll_No) continue;
+          item.id = String(item.Roll_No || ("ROW_" + i));
+
+          // Preserve any manual edits made by the user on the portal
+          if (localEditsMap[item.id]) {
+            item = Object.assign({}, item, localEditsMap[item.id]);
+          }
+          parsed.push(item);
+        }
+        return parsed;
+      }
+
+      function applyLoadedStudents(loaded, silent) {
+        if (!Array.isArray(loaded) || loaded.length === 0) return;
+
+        // Also keep any manually added "NEW_" students created on portal
+        Object.keys(localEditsMap).forEach(function (k) {
+          if (k.indexOf("NEW_") === 0) {
+            var exists = loaded.some(function (s) { return String(s.id) === k; });
+            if (!exists) loaded.unshift(localEditsMap[k]);
+          }
+        });
+
+        studentsList = loaded;
+        savePortalData();
+        populateClassDropdowns();
+        selectAllFiltered(true);
+        document.getElementById("sheetModal").classList.remove("open");
+        if (!silent) {
+          showToast("✅ Google Sheet से " + loaded.length + " छात्रों का डेटा सफलतापूर्वक सेव हो गया!");
+        }
+      }
+
+      // JSONP Loader works even on local file:// in Acode without CORS issues
+      function loadSheetViaJSONP(sheetId) {
+        return new Promise(function (resolve) {
+          var cbName = "__gvizCallback_" + Date.now();
+          var script = document.createElement("script");
+          var timer = setTimeout(function () {
+            cleanup();
+            resolve(null);
+          }, 8000);
+
+          function cleanup() {
+            clearTimeout(timer);
+            try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+            if (script && script.parentNode) script.parentNode.removeChild(script);
+          }
+
+          window[cbName] = function (gvizData) {
+            cleanup();
+            try {
+              var rows2D = [];
+              if (gvizData && gvizData.table) {
+                if (gvizData.table.cols) {
+                  var colLabels = gvizData.table.cols.map(function (c) { return c.label || ""; });
+                  if (colLabels.some(Boolean)) rows2D.push(colLabels);
+                }
+                if (gvizData.table.rows) {
+                  gvizData.table.rows.forEach(function (r) {
+                    var cells = (r.c || []).map(function (cell) {
+                      return cell ? (cell.f !== undefined && cell.f !== null ? cell.f : (cell.v !== undefined && cell.v !== null ? cell.v : "")) : "";
+                    });
+                    rows2D.push(cells);
+                  });
+                }
+              }
+              resolve(parseRawSheetRows(rows2D));
+            } catch (err) {
+              resolve(null);
+            }
+          };
+
+          script.src = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json;responseHandler:" + cbName + "&sheet=Sheet1";
+          script.onerror = function () {
+            cleanup();
+            resolve(null);
+          };
+          document.body.appendChild(script);
+        });
+      }
+
+      async function syncFromGoogleSheet(silent) {
+        var inputUrl = document.getElementById("sheetUrlInput").value.trim() || DEFAULT_GOOGLE_SHEET_URL;
+        sSet(KEYS.SHEET_URL, inputUrl);
+        if (!silent) showToast("⏳ Google Sheet से डेटा लोड हो रहा है...");
+
+        var matchId = inputUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+        if (matchId && matchId[1]) {
+          var sheetId = matchId[1];
+
+          // 1. Try CORS-free JSONP first (Works in Acode + GitHub Pages + Mobile)
+          var jsonpLoaded = await loadSheetViaJSONP(sheetId);
+          if (jsonpLoaded && jsonpLoaded.length > 0) {
+            applyLoadedStudents(jsonpLoaded, silent);
+            return;
+          }
+
+          // 2. Fallback to standard fetch
+          try {
+            var gvizUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json&sheet=Sheet1";
+            var res = await fetch(gvizUrl);
+            var txt = await res.text();
+            var jsonStart = txt.indexOf("{");
+            var jsonEnd = txt.lastIndexOf("}");
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+              var gvizData = JSON.parse(txt.substring(jsonStart, jsonEnd + 1));
+              var rows2D = [];
+              if (gvizData.table && gvizData.table.cols) {
+                var colLabels = gvizData.table.cols.map(function (c) { return c.label || ""; });
+                if (colLabels.some(Boolean)) rows2D.push(colLabels);
+              }
+              if (gvizData.table && gvizData.table.rows) {
+                gvizData.table.rows.forEach(function (r) {
+                  var cells = (r.c || []).map(function (cell) { return cell ? (cell.f || cell.v || "") : ""; });
+                  rows2D.push(cells);
+                });
+              }
+              var loaded = parseRawSheetRows(rows2D);
+              if (loaded.length > 0) {
+                applyLoadedStudents(loaded, silent);
+                return;
+              }
+            }
+          } catch (e) {}
+
+          if (!silent) showToast("⚠️ कृपया सुनिश्चित करें कि आपकी Google Sheet 'Anyone with the link' पर शेयर है।");
+          return;
+        }
+      }
+
+      // =====================================================
+      // 10. GLOBAL CLICK DELEGATION
+      // =====================================================
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-action]");
+        if (!btn) return;
+
+        var action = btn.getAttribute("data-action");
+        var id = btn.getAttribute("data-id");
+
+        if (action === "close-splash") {
+          removeSplash();
+        } else if (action === "open-class-tt") {
+          openClassTimetableModal();
+        } else if (action === "open-add-student") {
+          openAddStudentModal();
+        } else if (action === "open-sheet-modal") {
+          document.getElementById("sheetModal").classList.add("open");
+        } else if (action === "print-selected") {
+          singlePrintTempIds = null;
+          renderAdmitCards();
+          document.body.classList.add("clean-print-mode");
+          showToast("🖨️ प्रिंट तैयार है...");
+          setTimeout(function () { window.print(); }, 200);
+        } else if (action === "print-one") {
+          singlePrintTempIds = [String(id)];
+          renderAdmitCards();
+          document.body.classList.add("clean-print-mode");
+          showToast("🖨️ 1 छात्र का कार्ड (Ratio 3 साइज) प्रिंट हो रहा है...");
+          setTimeout(function () { window.print(); }, 200);
+        } else if (action === "trigger-browser-print") {
+          window.print();
+        } else if (action === "enter-print-mode") {
+          document.body.classList.add("clean-print-mode");
+        } else if (action === "exit-print-mode") {
+          document.body.classList.remove("clean-print-mode");
+          singlePrintTempIds = null;
+          renderAdmitCards();
+        } else if (action === "select-all") {
+          selectAllFiltered(true);
+          showToast("☑️ सभी छात्र चुन लिए गए।");
+        } else if (action === "deselect-all") {
+          selectAllFiltered(false);
+          showToast("🔲 चयन हटा दिया गया।");
+        } else if (action === "toggle-student") {
+          var key = String(id);
+          if (selectedStudentIds.has(key)) selectedStudentIds.delete(key);
+          else selectedStudentIds.add(key);
+          renderStudentChips();
+          renderAdmitCards();
+        } else if (action === "edit-student") {
+          openEditStudentModal(id);
+        } else if (action === "save-student") {
+          saveStudentEdit();
+        } else if (action === "student-tt") {
+          openStudentTimetableModal(id);
+        } else if (action === "add-tt-row") {
+          addTimetableRow();
+        } else if (action === "clear-tt-rows") {
+          document.getElementById("ttRowsContainer").innerHTML = "";
+          addTimetableRow();
+        } else if (action === "remove-tt-row") {
+          var rowEl = btn.closest(".tt-row");
+          if (rowEl) rowEl.remove();
+        } else if (action === "save-tt") {
+          saveTimetableFromModal();
+        } else if (action === "copy-tt-all-classes") {
+          var sched = readRowsFromModal();
+          getUniqueClasses().forEach(function (c) {
+            classTimetables[c] = JSON.parse(JSON.stringify(sched));
+          });
+          savePortalData();
+          renderAdmitCards();
+          document.getElementById("timetableModal").classList.remove("open");
+          showToast("✅ सभी क्लासों में टाइम-टेबल सेव हो गया!");
+        } else if (action === "reset-student-tt") {
+          var stId = document.getElementById("ttTargetStudentId").value;
+          delete studentCustomSchedules[stId];
+          savePortalData();
+          renderAdmitCards();
+          document.getElementById("timetableModal").classList.remove("open");
+          showToast("🔄 छात्र पर वापस क्लास का टाइम-टेबल लागू हो गया!");
+        } else if (action === "open-camera") {
+          openCameraModal(id);
+        } else if (action === "close-camera") {
+          stopCameraStream();
+          document.getElementById("cameraModal").classList.remove("open");
+        } else if (action === "capture-photo") {
+          capturePhotoNow();
+        } else if (action === "switch-camera") {
+          currentFacingMode = (currentFacingMode === "environment") ? "user" : "environment";
+          startCameraStream();
+        } else if (action === "remove-photo") {
+          deleteStudentPhotoById(id);
+        } else if (action === "delete-photo-inside-modal") {
+          deleteStudentPhotoById(activeCameraStudentId);
+          stopCameraStream();
+          document.getElementById("cameraModal").classList.remove("open");
+        } else if (action === "sync-sheet") {
+          syncFromGoogleSheet(false);
+        } else if (action === "close-modal") {
+          var targetId = btn.getAttribute("data-target");
+          if (targetId) document.getElementById(targetId).classList.remove("open");
+        }
+      });
+
+      // Change & Input Listeners
+      document.getElementById("classFilter").addEventListener("change", function () {
+        var filtered = getFilteredStudents();
+        selectedStudentIds.clear();
+        filtered.forEach(function (s) { selectedStudentIds.add(String(s.id)); });
+        renderStudentChips();
+        renderAdmitCards();
+      });
+
+      document.getElementById("searchBox").addEventListener("input", function () {
+        var filtered = getFilteredStudents();
+        selectedStudentIds.clear();
+        filtered.forEach(function (s) { selectedStudentIds.add(String(s.id)); });
+        renderStudentChips();
+        renderAdmitCards();
+      });
+
+      document.getElementById("layoutMode").addEventListener("change", function () {
+        renderAdmitCards();
+      });
+
+      document.getElementById("printColorMode").addEventListener("change", function () {
+        sSet(KEYS.PRINT_COLOR, this.value);
+        applyPrintColorMode(this.value);
+        showToast(this.value === "BW" ? "⚫⚪ Black & White High-Contrast Mode चालू हो गया!" : "🎨 Colour Print Mode चालू हो गया!");
+      });
+
+      document.getElementById("examTitleInput").addEventListener("input", function () {
+        sSet(KEYS.EXAM_TITLE, this.value);
+        renderAdmitCards();
+      });
+
+      document.getElementById("ttClassSelect").addEventListener("change", function () {
+        loadClassTimetableInModal();
+      });
+
+      document.getElementById("directPhotoInput").addEventListener("change", function (ev) {
+        var file = ev.target.files[0];
+        if (!file || !activeCameraStudentId) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var canvas = document.getElementById("cameraCanvas");
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, 260, 310);
+            ctx.drawImage(img, 0, 0, 260, 310);
+            var dataUrl = canvas.toDataURL("image/jpeg", 0.78);
+            saveStudentPhoto(activeCameraStudentId, dataUrl);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById("csvFileInput").addEventListener("change", function (ev) {
+        var file = ev.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var text = e.target.result || "";
+          var lines = text.split(/\r?\n/);
+          var rows2D = lines.map(function (line) {
+            return line.split(",").map(function (cell) { return cell.replace(/^"|"$/g, "").trim(); });
+          });
+          var loaded = parseRawSheetRows(rows2D);
+          if (loaded.length > 0) {
+            applyLoadedStudents(loaded, false);
+          } else {
+            showToast("⚠️ CSV फाइल में डेटा नहीं मिला।");
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      // Start Portal
+      bootPortal();
+    })();
+  </script>
+</body>
+</html>
